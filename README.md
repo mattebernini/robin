@@ -28,8 +28,9 @@ Robin è stato sviluppato utilizzando diverse tecnologie, tra cui:
             },
             "model-gpt" : "gpt-3.5-turbo"
         }
-        
+
 - personalizza il file sopracitato e il file config/contesto.md
 - lanciare l'assistente:
+
         python3 main.py
 

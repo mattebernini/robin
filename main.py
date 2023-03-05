@@ -37,18 +37,11 @@ def parla(text, configs):
     engine.say(text)
     engine.runAndWait()
 
-def salva_contesto(frase):
-    f = open("chat/"+frase[1]+".md", "w")
-    for m in messages:
-        if m["role"] == "user":
-            f.write(m["content"]+"\n")
-    print("contesto "+frase[1]+" salvato")
-
 def carica_contesto(frase):
     try:
-        f = open("chat/"+frase[1]+".md", "r")
+        f = open("contesto/"+frase[1]+".md", "r")
     except:
-        print("chat non esistente")
+        print("contesto non esistente")
         return False
     lines = f.readlines()
     for line in lines:
@@ -56,16 +49,23 @@ def carica_contesto(frase):
     print("contesto "+frase[1]+" caricato")
     return True
 
+def salva_chat(frase):
+    f = open("chat/"+frase[1]+".md", "a")
+    for m in messages:
+        if m["role"] != "system":
+            f.write("*"+m["role"]+"*: "+m["content"]+"\n")
+    print("chat "+frase[1]+" salvata")
+
 def impostazioni(comando, configs, messages):
     frase = comando.split(" ")
     match frase[0]:
         case "\\m":
             print(open("config/menu.md").read())
-        case "\\s":
-            salva_contesto(frase)
         case "\\l":
             if not carica_contesto(frase):
                 return configs, messages
+        case "\\s":
+            salva_chat(frase)
         case _:
             print("comando non valido")
     return configs, messages
@@ -88,7 +88,7 @@ def inizializza():
     with open("log/comandi.log", "a") as f:
         f.write(oggi+"\n")
     # carico il contesto iniziale
-    f = open("config/contesto.md", "r")
+    f = open("config/contesto_iniziale.md", "r")
     contesto = f.read()
     messages = [
         {"role": "system", "content": contesto}
