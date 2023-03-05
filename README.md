@@ -17,6 +17,7 @@ Robin è stato sviluppato utilizzando diverse tecnologie, tra cui:
 - in ambiente Linux installare i requisiti con pip da requirements.txt
 - installare espeak e una voce a tua scelta qui https://github.com/espeak-ng/espeak-ng/blob/master/docs/mbrola.md#linux-installation altrimenti usare la voce 'italian' di default
 - nella cartella config aggiungere il file config.json fatto così:
+
         {
             "OPEN_AI_API_KEY" : "la tua api",
             "ascolta" : 0,
@@ -27,6 +28,7 @@ Robin è stato sviluppato utilizzando diverse tecnologie, tra cui:
             },
             "model-gpt" : "gpt-3.5-turbo"
         }
+        
 - personalizza il file sopracitato e il file config/contesto.md
 - lanciare l'assistente:
         python3 main.py
