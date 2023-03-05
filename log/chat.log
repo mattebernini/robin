@@ -171,3 +171,14 @@ with open('file.json', 'w') as f:
 
 ## Licenza
 Questo codice è rilasciato sotto licenza MIT.
+2023-03-05 14:55:37.568591
+MATTE: voglio far ignorare a git il file ./config/config.json
+ROBIN: Ah, vuoi nascondere il file `config.json` a Git? Capisco, potrebbe essere utile se non vuoi che le informazioni sensibili contenute nel file vengano condivise con altri utenti. Per farlo, puoi aggiungere il file alla lista di `.gitignore`. 
+
+Per farlo, apri il file `.gitignore` nella root del tuo repository e aggiungi la seguente riga:
+
+```
+/config/config.json
+```
+
+In questo modo, Git ignorerà il file `config.json` e non lo includerà nei commit futuri. Ricorda però che se il file è già stato committato in precedenza, dovrai rimuoverlo dal repository usando il comando `git rm --cached config/config.json`. Spero di esserti stato utile!
