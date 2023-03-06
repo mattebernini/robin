@@ -22,12 +22,41 @@ def ascolta():
 def chiedi_a_gpt(messages:list, configs):
     api_key_openai = configs["OPEN_AI_API_KEY"]
     openai.api_key = api_key_openai
-    response = openai.ChatCompletion.create(
-        model = configs["model-gpt"],
-        temperature = 0.0, # da 0 a 2 (randomicità)
-        messages = messages
-    )
-    return response.choices[0].message
+    try:
+        response = openai.ChatCompletion.create(
+            model = configs["model-gpt"],
+            temperature = 0.0, # da 0 a 2 (randomicità)
+            messages = messages
+        )
+        return response.choices[0].message
+    except openai.error.Timeout as e:
+        #Handle timeout error, e.g. retry or log
+        print(f"OpenAI API request timed out: {e}")
+        return None
+    except openai.error.APIError as e:
+        #Handle API error, e.g. retry or log
+        print(f"OpenAI API returned an API Error: {e}")
+        return None
+    except openai.error.APIConnectionError as e:
+        #Handle connection error, e.g. check network or log
+        print(f"OpenAI API request failed to connect: {e}")
+        return None
+    except openai.error.InvalidRequestError as e:
+        #Handle invalid request error, e.g. validate parameters or log
+        print(f"OpenAI API request was invalid: {e}")
+        return None
+    except openai.error.AuthenticationError as e:
+        #Handle authentication error, e.g. check credentials or log
+        print(f"OpenAI API request was not authorized: {e}")
+        return None
+    except openai.error.PermissionError as e:
+        #Handle permission error, e.g. check scope or log
+        print(f"OpenAI API request was not permitted: {e}")
+        return None
+    except openai.error.RateLimitError as e:
+        #Handle rate limit error, e.g. wait or log
+        print(f"OpenAI API request exceeded rate limit: {e}")
+        return None
 
 def parla(text, configs):
     engine = pyttsx3.init()
@@ -43,9 +72,8 @@ def carica_contesto(frase):
     except:
         print("contesto non esistente")
         return False
-    lines = f.readlines()
-    for line in lines:
-        messages.append({"role": "user", "content": line})
+    c = f.read()
+    messages.append({"role": "system", "content": c})
     print("contesto "+frase[1]+" caricato")
     return True
 
@@ -113,14 +141,15 @@ if __name__ == "__main__":
             if comando:
                 messages.append({"role": "user", "content": comando})
                 new_message = chiedi_a_gpt(messages, configs)
-                messages.append(new_message)
-                risposta = new_message["content"]
-                # output
-                print("ROBIN: " + risposta)
-                if configs["parla"] == 1 and len(risposta) < 1000:
-                    parla(risposta, configs)
-                # conclusione
-                aggiorna_log(comando, risposta)
+                if new_message:
+                    messages.append(new_message)
+                    risposta = new_message["content"]
+                    # output
+                    print("ROBIN: " + risposta)
+                    if configs["parla"] == 1 and len(risposta) < configs["limite-parole"]:
+                        parla(risposta, configs)
+                    # conclusione
+                    aggiorna_log(comando, risposta)
                 print("\n")
     except KeyboardInterrupt:
         pass
